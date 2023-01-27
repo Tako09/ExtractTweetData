@@ -1,3 +1,4 @@
+# tweet idからインプレッション数などを取得するスクリプト
 import requests
 import os
 import json
