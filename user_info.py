@@ -1,3 +1,4 @@
+# user id からフォロワー数などを取得するスクリプト 
 import requests
 import os
 import json
