@@ -3,21 +3,15 @@ import json
 from copy import deepcopy
 import re
 
-# To set your environment variables in your terminal run the following line:
-# export 'BEARER_TOKEN'='<your_bearer_token>'
-with open('key.json', 'r') as f:
-    open_json = json.load(f)
-bearer_token = open_json['bearer_token']
-
 class GetTweetMetrics():
     '''
     Tweet idから特定のtweetのmetrics
     (tweetの指標(例：インプレッション数など))を取得するクラス
     '''
-    def __init__(self, bearer_token) -> None:
+    def __init__(self, bearer_token:str()) -> None:
         self.bearer_token = bearer_token # APIキー的な
         
-    def create_url(self, ids, tweet_fields):
+    def create_url(self, ids:list(), tweet_fields:str()) -> str():
         # 取得したい情報を取るためのURLを生成する
         # Tweetから欲しい情報は下記の中から選ぶことができる。
         # APIのレベルによって取得出来ないものもあるので公式HP参照する
@@ -38,14 +32,14 @@ class GetTweetMetrics():
         Method required by bearer token authentication.
         """
 
-        r.headers["Authorization"] = f"Bearer {bearer_token}"
+        r.headers["Authorization"] = f"Bearer {self.bearer_token}"
         r.headers["User-Agent"] = "v2TweetLookupPython"
         return r
 
 
-    def connect_to_endpoint(self, url):
+    def connect_to_endpoint(self, url:str()) -> dict():
         response = requests.request("GET", url, auth=self.bearer_oauth)
-        print(response.status_code)
+        # print(response.status_code)
         if response.status_code != 200:
             raise Exception(
                 "Request returned an error: {} {}".format(
@@ -55,10 +49,10 @@ class GetTweetMetrics():
         return response.json()
 
 
-    def get(self, ids:list(), columns:dict(), tweet_fields:str()):
+    def get(self, ids:list(), tweet_columns:dict(), tweet_fields:str()) -> dict():
         # metricsを取得する関数
         self.raw_lst = [] # ローデータを保管しておく
-        self.metrics_table = deepcopy(columns) # 後からでもアクセスできるようにする
+        self.metrics_table = deepcopy(tweet_columns) # 後からでもアクセスできるようにする
         public_metrics = ['retweet_count', 'reply_count', 'like_count', 'quote_count', 'impression_count'] # public_metricsに含まれる値
         entities = 'hashtag'
         repeater = re.compile(entities)
@@ -71,7 +65,7 @@ class GetTweetMetrics():
             self.raw_lst.append(raw)
             
             hashN = 0
-            for k in columns.keys():
+            for k in tweet_columns.keys():
             # 欲しいカラムを取得してcolumnsに新し値として入れる
                 if k in public_metrics:
                     self.metrics_table[k].append(raw['public_metrics'][k])
