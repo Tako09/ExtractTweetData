@@ -1,4 +1,5 @@
 /bearer_token.json
 /*.json
 /test.py
-/test.csv
+/test(user).csv
+/__pycache__
